@@ -7,12 +7,12 @@ export function Card({
 }: {
   title: string;
   children: ReactNode;
-  href: string;
+  href?: string;
 }) {
   return (
     <a
       className="bg-green-300 group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-neutral-700 hover:bg-red-800"
-      href={`${href}?utm_source=create-turbo&utm_medium=with-tailwind&utm_campaign=create-turbo"`}
+      href={href || '#'}
       rel="noopener noreferrer"
       target="_blank"
     >
