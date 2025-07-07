@@ -28,7 +28,8 @@ const Switcher = () => {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center items-center gap-2 relative">
+      <hr className="flex-1 opacity-25" />
       <Button
         variant="ghost"
         size="icon"
@@ -37,6 +38,7 @@ const Switcher = () => {
       >
         <ArrowUpDown className="w-4 h-4 text-foreground" />
       </Button>
+      <hr className="flex-1 opacity-25" />
     </div>
   );
 };
