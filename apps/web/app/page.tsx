@@ -124,6 +124,34 @@ export default function Page() {
     });
   }, [fromCurrency, toCurrency, debouncedAmount]);
 
+  const handleFromCurrencyChange = useCallback(
+    (val: string) => {
+      if (val === toCurrency) {
+        setToCurrency(fromCurrency);
+      }
+      setFromCurrency(val);
+    },
+    [toCurrency, fromCurrency, setToCurrency, setFromCurrency]
+  );
+
+  const handleToCurrencyChange = useCallback(
+    (val: string) => {
+      if (val === fromCurrency) {
+        setFromCurrency(toCurrency);
+      }
+      setToCurrency(val);
+    },
+    [fromCurrency, toCurrency, setFromCurrency, setToCurrency]
+  );
+
+  const handleSwapClick = useCallback(() => {
+    toast.promise(swap(), {
+      loading: 'Swapping...',
+      success: 'Swapped successfully',
+      error: 'Failed to swap',
+    });
+  }, []);
+
   useEffect(() => {
     if (isFirstMount.current && currencyList?.currencies) {
       setInitialData();
@@ -164,12 +192,7 @@ export default function Page() {
             currency={fromCurrency}
             amount={fromAmount}
             onAmountChange={setFromAmount}
-            onCurrencyChange={(val) => {
-              if (val === toCurrency) {
-                setToCurrency(fromCurrency);
-              }
-              setFromCurrency(val);
-            }}
+            onCurrencyChange={handleFromCurrencyChange}
             currencies={currencyList?.currencies ?? {}}
             sectionType="from"
             usdRate={rateData?.usdRates?.from}
@@ -181,12 +204,7 @@ export default function Page() {
             currency={toCurrency}
             amount={toAmount}
             onAmountChange={setToAmount}
-            onCurrencyChange={(val) => {
-              if (val === fromCurrency) {
-                setFromCurrency(toCurrency);
-              }
-              setToCurrency(val);
-            }}
+            onCurrencyChange={handleToCurrencyChange}
             currencies={currencyList?.currencies ?? {}}
             sectionType="to"
             usdRate={rateData?.usdRates?.to}
@@ -197,13 +215,7 @@ export default function Page() {
         <Button
           className="w-full py-6 text-lg"
           disabled={!fromAmount || !toAmount || isFetchingRate}
-          onClick={() => {
-            toast.promise(swap(), {
-              loading: 'Swapping...',
-              success: 'Swapped successfully',
-              error: 'Failed to swap',
-            });
-          }}
+          onClick={handleSwapClick}
         >
           Swap
         </Button>
