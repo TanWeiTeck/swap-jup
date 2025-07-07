@@ -23,7 +23,6 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^15.3.5",
     "@next/eslint-plugin-next": "^15.3.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
