@@ -39,6 +39,10 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
   const [lastChanged, setLastChanged] = useAtom(lastChangedAtom);
   const [, setDebouncedAmount] = useAtom(debouncedAmountAtom);
 
+  const isCurrenciesAvailable = React.useMemo(() => {
+    return currencies && Object.entries(currencies).length > 0;
+  }, [currencies]);
+
   const usdEquivalent = React.useMemo(() => {
     if (!usdRate || !amount) return 0;
 
@@ -51,6 +55,12 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
       return 0;
     }
   }, [usdRate, amount]);
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLastChanged(sectionType);
+    const stringValue = e.target.value.replace(/,/g, '');
+    setDebouncedAmount(stringValue);
+  };
 
   return (
     <div className={''}>
@@ -68,11 +78,19 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
           <Skeleton className="w-18 h-6 opacity-20" />
         ) : (
           <Select value={currency} onValueChange={onCurrencyChange}>
-            <SelectTrigger
-              className={`min-w-[90px] text-foreground font-bold text-lg rounded-xl border-none focus:ring-0 focus:outline-none focus-visible:ring-0 bg-transparent`}
-            >
-              <SelectValue />
-            </SelectTrigger>
+            {isCurrenciesAvailable ? (
+              <SelectTrigger
+                className={`min-w-[90px] text-foreground font-bold text-lg rounded-xl border-none focus:ring-0 focus:outline-none focus-visible:ring-0 bg-transparent`}
+              >
+                <SelectValue placeholder="select" />
+              </SelectTrigger>
+            ) : (
+              <div className="flex justify-center items-center h-full">
+                <p className="text-foreground/50 text-sm">
+                  No currencies available
+                </p>
+              </div>
+            )}
             <SelectContent>
               {Object.entries(currencies).map(([key, icon]) => (
                 <SelectItem
@@ -94,13 +112,10 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
           <NumberInput
             placeholder={'0.00'}
             value={amount}
-            onValueChange={onAmountChange}
-            onChange={(e) => {
-              setLastChanged(sectionType);
-              const stringValue = e.target.value.replace(/,/g, '');
-              setDebouncedAmount(stringValue);
-            }}
+            onValueChange={(values) => onAmountChange(values.value || '')}
+            onChange={handleOnChange}
             className="flex-1 text-right text-foreground bg-transparent outline-none border-none shadow-none px-0 font-bold tracking-tight"
+            disabled={!isCurrenciesAvailable}
           />
         )}
       </div>

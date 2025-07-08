@@ -118,11 +118,18 @@ export default function Page() {
 
   const getShareLink = useCallback(async () => {
     const url = window.location.href;
+    const fromAmount = lastChanged === 'from' ? debouncedAmount : '';
+    const toAmount = lastChanged === 'to' ? debouncedAmount : '';
+    const description =
+      toCurrency && fromCurrency
+        ? `To Sell ${fromAmount} ${fromCurrency} for ${toAmount} ${toCurrency}`
+        : '';
+
     await navigator.clipboard.writeText(url);
     toast.success('Link copied to clipboard', {
-      description: `To Sell ${debouncedAmount} ${fromCurrency} for ${toCurrency}`,
+      description,
     });
-  }, [fromCurrency, toCurrency, debouncedAmount]);
+  }, [fromCurrency, toCurrency, debouncedAmount, lastChanged]);
 
   const handleFromCurrencyChange = useCallback(
     (val: string) => {
