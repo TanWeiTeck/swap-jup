@@ -9,7 +9,7 @@ import {
   debouncedAmountAtom,
 } from '../_store/jotai';
 import { ArrowUpDown } from 'lucide-react';
-import { Button } from '@repo/ui/components/button';
+import { Button } from '@repo/ui/components';
 
 const Switcher = () => {
   const [, setLastChanged] = useAtom(lastChangedAtom);

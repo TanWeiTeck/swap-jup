@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Toaster } from '@repo/ui/components/sonner';
+import { Toaster } from '@repo/ui/components';
 import { Geist } from 'next/font/google';
 import Providers from './_providers';
 import './globals.css';

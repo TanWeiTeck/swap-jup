@@ -2,16 +2,16 @@ import React from 'react';
 import Decimal from 'decimal.js';
 import { useAtom } from 'jotai';
 import { formatCurrencyAmount } from '../_utils/formatCurrency';
-import { NumberInput } from '@repo/ui/components/numberInput';
-import { Skeleton } from '@repo/ui/components/skeleton';
+import { debouncedAmountAtom, lastChangedAtom } from '../_store/jotai';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/ui/components/select';
-import { debouncedAmountAtom, lastChangedAtom } from '../_store/jotai';
+  NumberInput,
+  Skeleton,
+} from '@repo/ui/components';
 
 interface SwapSectionProps {
   currency: string;

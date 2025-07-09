@@ -2,8 +2,7 @@
 
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { toast } from '@repo/ui/components/sonner';
-import { Button } from '@repo/ui/components/button';
+import { toast, Button } from '@repo/ui/components';
 import { useAtom } from 'jotai';
 import {
   fromCurrencyAtom,
