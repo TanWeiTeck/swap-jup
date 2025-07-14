@@ -1,5 +1,7 @@
-export async function getCurrencies() {
-  return {
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  const currencies = {
     USD: { label: 'USD', icon: '🇺🇸' },
     HKD: { label: 'HKD', icon: '🇭🇰' },
     AUD: { label: 'AUD', icon: '🇦🇺' },
@@ -12,4 +14,6 @@ export async function getCurrencies() {
     CZK: { label: 'CZK', icon: '🇨🇿' },
     AED: { label: 'AED', icon: '🇦🇪' },
   };
+
+  return NextResponse.json(currencies);
 }
