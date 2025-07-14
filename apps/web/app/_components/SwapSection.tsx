@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Decimal from 'decimal.js';
 import { useAtom } from 'jotai';
@@ -12,17 +14,18 @@ import {
   NumberInput,
   Skeleton,
 } from '@repo/ui/components';
+import { CurrencyList } from '../types';
 
 interface SwapSectionProps {
+  currencies: CurrencyList;
   currency: string;
-  amount?: string | number;
-  onAmountChange: (value: string) => void;
   onCurrencyChange: (val: string) => void;
-  currencies: Record<string, string>;
+  amount?: string;
+  onAmountChange: (value: string) => void;
   sectionType: 'from' | 'to';
   usdRate?: number;
-  isCurrenciesLoading?: boolean;
   isRateLoading?: boolean;
+  initialCurrency?: string;
 }
 
 export const SwapSection: React.FC<SwapSectionProps> = ({
@@ -33,28 +36,32 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
   currencies,
   sectionType,
   usdRate,
-  isCurrenciesLoading,
   isRateLoading,
 }) => {
   const [lastChanged, setLastChanged] = useAtom(lastChangedAtom);
   const [, setDebouncedAmount] = useAtom(debouncedAmountAtom);
 
   const isCurrenciesAvailable = React.useMemo(() => {
-    return currencies && Object.entries(currencies).length > 0;
+    return currencies && Object.keys(currencies).length > 0;
   }, [currencies]);
 
   const usdEquivalent = React.useMemo(() => {
-    if (!usdRate || !amount) return 0;
+    if (currency === 'USD' && amount) {
+      return formatCurrencyAmount(amount, '$');
+    }
+    if (!usdRate || !amount) {
+      return '$ 0.00';
+    }
 
     try {
-      const amountDecimal = new Decimal(amount.toString());
+      const amountDecimal = new Decimal(amount);
       const usdRateDecimal = new Decimal(usdRate);
-      return amountDecimal.times(usdRateDecimal).toNumber();
+      return formatCurrencyAmount(amountDecimal.times(usdRateDecimal), '$');
     } catch (error) {
       console.error('Error calculating USD equivalent:', error);
       return 0;
     }
-  }, [usdRate, amount]);
+  }, [currency, amount, usdRate]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLastChanged(sectionType);
@@ -74,36 +81,32 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
             : ''
         }`}
       >
-        {isCurrenciesLoading ? (
-          <Skeleton className="w-18 h-6 opacity-20" />
-        ) : (
-          <Select value={currency} onValueChange={onCurrencyChange}>
-            {isCurrenciesAvailable ? (
-              <SelectTrigger
-                className={`min-w-[90px] text-foreground font-bold text-lg rounded-xl border-none focus:ring-0 focus:outline-none focus-visible:ring-0 bg-transparent`}
+        <Select value={currency} onValueChange={onCurrencyChange}>
+          {isCurrenciesAvailable ? (
+            <SelectTrigger
+              className={`min-w-[90px] text-foreground font-bold text-lg rounded-xl border-none focus:ring-0 focus:outline-none focus-visible:ring-0 bg-transparent`}
+            >
+              <SelectValue />
+            </SelectTrigger>
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              <p className="text-foreground/50 text-sm">
+                No currencies available
+              </p>
+            </div>
+          )}
+          <SelectContent>
+            {Object.values(currencies).map(({ label, icon }, key) => (
+              <SelectItem
+                key={`${label}-${key}`}
+                value={label ?? ''}
+                className="text-base flex items-center gap-2"
               >
-                <SelectValue placeholder="select" />
-              </SelectTrigger>
-            ) : (
-              <div className="flex justify-center items-center h-full">
-                <p className="text-foreground/50 text-sm">
-                  No currencies available
-                </p>
-              </div>
-            )}
-            <SelectContent>
-              {Object.entries(currencies).map(([key, icon]) => (
-                <SelectItem
-                  key={key}
-                  value={key}
-                  className="text-base flex items-center gap-2"
-                >
-                  <span>{icon}</span> {key}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+                <span>{icon}</span> {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {isRateLoading && sectionType !== lastChanged ? (
           <div className="flex justify-end flex-1">
             <Skeleton className="w-30 h-7 opacity-20" />
@@ -123,10 +126,8 @@ export const SwapSection: React.FC<SwapSectionProps> = ({
         {isRateLoading &&
         (currency !== 'USD' || sectionType !== lastChanged) ? (
           <Skeleton className="w-28 h-6 opacity-20" />
-        ) : usdEquivalent > 0 ? (
-          `$${formatCurrencyAmount(usdEquivalent)}`
         ) : (
-          '0.00'
+          usdEquivalent
         )}
       </div>
     </div>

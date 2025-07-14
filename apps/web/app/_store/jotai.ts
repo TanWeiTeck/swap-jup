@@ -1,11 +1,13 @@
 import { atom } from 'jotai';
 import { debounce } from 'lodash';
+import { CurrencyList } from '../types';
 
 export const fromCurrencyAtom = atom('');
 export const toCurrencyAtom = atom('');
 export const fromAmountAtom = atom<string>('');
 export const toAmountAtom = atom<string>('');
-export const lastChangedAtom = atom<'from' | 'to'>('from');
+export const lastChangedAtom = atom<string>('from');
+export const currencyListAtom = atom<CurrencyList | undefined>(undefined);
 
 const debouncedAmountAtomBase = atom<string>('');
 let debouncedSetter: ((value: string) => void) | null = null;

@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { keepPreviousData } from '@tanstack/react-query';
 
 interface RateDataParams {
   fromCurrency: string;
   toCurrency: string;
   feePercentage: number;
   amount?: string;
-  direction?: 'from' | 'to';
+  direction?: string;
 }
 
 interface RateData {
@@ -53,8 +52,11 @@ export const useGetRate = ({
       if (!res.ok) throw new Error('Failed to fetch rate');
       return res.json();
     },
-    placeholderData: keepPreviousData,
     refetchInterval: 5 * 1000,
     enabled,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };

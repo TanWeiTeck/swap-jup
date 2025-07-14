@@ -1,19 +1,15 @@
-import { NextResponse } from 'next/server';
-
-export async function GET() {
-  return NextResponse.json({
-    currencies: {
-      USD: '🇺🇸',
-      HKD: '🇭🇰',
-      AUD: '🇦🇺',
-      MYR: '🇲🇾',
-      GBP: '🇬🇧',
-      EUR: '🇪🇺',
-      IDR: '🇮🇩',
-      NZD: '🇳🇿',
-      CNY: '🇨🇳',
-      CZK: '🇨🇿',
-      AED: '🇦🇪',
-    },
-  });
+export async function getCurrencies() {
+  return {
+    USD: { label: 'USD', icon: '🇺🇸' },
+    HKD: { label: 'HKD', icon: '🇭🇰' },
+    AUD: { label: 'AUD', icon: '🇦🇺' },
+    MYR: { label: 'MYR', icon: '🇲🇾' },
+    GBP: { label: 'GBP', icon: '🇬🇧' },
+    EUR: { label: 'EUR', icon: '🇪🇺' },
+    IDR: { label: 'IDR', icon: '🇮🇩' },
+    NZD: { label: 'NZD', icon: '🇳🇿' },
+    CNY: { label: 'CNY', icon: '🇨🇳' },
+    CZK: { label: 'CZK', icon: '🇨🇿' },
+    AED: { label: 'AED', icon: '🇦🇪' },
+  };
 }

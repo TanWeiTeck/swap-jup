@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Remain for testing
-  // await new Promise((resolve) => setTimeout(resolve, 800));
+  await new Promise((resolve) => setTimeout(resolve, 800));
 
   return NextResponse.json({
     rate: rateWithFee,

@@ -1,31 +1,51 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { useAtom } from 'jotai';
+import { debounce } from 'lodash';
 import {
-  fromAmountAtom,
-  lastChangedAtom,
-  fromCurrencyAtom,
-  toCurrencyAtom,
-  toAmountAtom,
   debouncedAmountAtom,
+  fromAmountAtom,
+  fromCurrencyAtom,
+  lastChangedAtom,
+  toAmountAtom,
+  toCurrencyAtom,
 } from '../_store/jotai';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@repo/ui/components';
 
-const Switcher = () => {
-  const [, setLastChanged] = useAtom(lastChangedAtom);
+const Switcher = ({ disabled }: { disabled?: boolean }) => {
   const [fromCurrency, setFromCurrency] = useAtom(fromCurrencyAtom);
   const [toCurrency, setToCurrency] = useAtom(toCurrencyAtom);
   const [, setFromAmount] = useAtom(fromAmountAtom);
-  const [toAmount] = useAtom(toAmountAtom);
+  const [, setToAmount] = useAtom(toAmountAtom);
   const [, setDebouncedAmount] = useAtom(debouncedAmountAtom);
+  const [, setLastChanged] = useAtom(lastChangedAtom);
 
-  const handleSwitch = () => {
-    setFromCurrency(toCurrency);
-    setToCurrency(fromCurrency);
-    setFromAmount(toAmount);
-    setDebouncedAmount(toAmount);
-    setLastChanged('from');
-  };
+  const debouncedSwitch = useMemo(
+    () =>
+      debounce(
+        () => {
+          const initialAmount = '100';
+          setFromCurrency(toCurrency);
+          setToCurrency(fromCurrency);
+          setFromAmount(initialAmount);
+          setToAmount('');
+          setDebouncedAmount(initialAmount);
+          setLastChanged('from');
+        },
+        1000,
+        { leading: true, trailing: false }
+      ),
+    [
+      fromCurrency,
+      setDebouncedAmount,
+      setFromAmount,
+      setFromCurrency,
+      setLastChanged,
+      setToAmount,
+      setToCurrency,
+      toCurrency,
+    ]
+  );
 
   return (
     <div className="flex justify-center items-center gap-2 relative">
@@ -33,8 +53,9 @@ const Switcher = () => {
       <Button
         variant="ghost"
         size="icon"
-        onClick={handleSwitch}
-        className="bg-secondary/50 rounded-full hover:shadow-md"
+        onClick={debouncedSwitch}
+        className="bg-secondary/50 rounded-full hover:shadow-md disabled:cursor-pointer"
+        disabled={disabled}
       >
         <ArrowUpDown className="w-4 h-4 text-foreground" />
       </Button>
